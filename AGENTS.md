@@ -8,23 +8,27 @@ Vercel (api/*.js) qui interrogent une base Postgres Neon via le package `pg`.
 
 ## Structure
 
-- `api/*.js` — 5 fonctions serverless : `kpis`, `cities`, `timeseries`,
-  `pollutants`, `missing`
+- `api/*.js` — 7 fonctions serverless : `kpis`, `cities`, `timeseries`,
+  `pollutants`, `missing`, `patterns` (heatmap/weekend/monthly),
+  `correlations` (samples + averages)
 - `lib/db.js` — pool pg partagé, `max: 3`, SSL, lit `DATABASE_URL`
 - `src/main.jsx` — point d'entrée React (monte App + Chart.js register)
 - `src/App.jsx` — layout, chargement des données (`loadAllData`), onglets
-- `src/pages/` — 3 pages : `OverviewPage`, `ComparePage`, `QualityPage`
+- `src/pages/` — 5 pages : `OverviewPage`, `ComparePage`, `QualityPage`,
+  `TemporalPage` (heatmap heure×jour, weekend, mensuel), `CorrelationsPage`
+  (scatter PM2.5/AQI, bar polluants, table)
 - `src/components/` — TopBar, KpiCards, QualityCards, RecapTable, Panel,
-  Card, LoadingState
+  Card, LoadingState, PollutantTable
 - `src/components/charts/` — CityBubble, LineChart, BarCities,
-  StackedPollutants, MissingChart
-- `src/lib/api.js` — fetch des 5 endpoints en parallèle
-- `src/lib/theme.js` — palette Chart.js + lecture des CSS vars
+  StackedPollutants, MissingChart, Heatmap, WeekendBar, MonthlyLine,
+  ScatterChart, PollutantBar
+- `src/lib/api.js` — fetch des 7 endpoints (5 en parallèle + lazy pour les 2 nouvelles pages)
+- `src/lib/theme.js` — palette Chart.js, noms de jours/mois FR, format de date, CSS vars
 - `src/context/ThemeContext.jsx` — mode clair/sombre persistant
-- `src/styles.css` — Tailwind v4, thèmes clair/sombre (`.dark`),
-  tokens de couleurs (`--color-surface`, `--color-panel`, ...)
+- `src/styles.css` — Tailwind v4, thèmes clair/sombre (`.dark`), fond en
+  dégradé, tokens de couleurs (`--color-accent`, `--color-grid`, ...)
 - `index.html` — entrée Vite (racine)
-- `vite.config.js` — proxy `/api` → localhost:3000
+- `vite.config.mjs` — proxy `/api` → localhost:3000 (ESM, pas de `type: module` dans package.json sinon les fonctions serverless CommonJS cassent)
 - `vercel.json` — framework vite, install/dev/build commands npm
 
 ## Commandes
