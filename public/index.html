@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Qualité de l'Air</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#171d26; --panel-2:#1d2530; --border:#2a3441;
+    --text:#e8edf3; --muted:#8a97a8; --accent:#4fd1c5; --accent-2:#f6ad55;
+    --good:#48bb78; --warn:#ecc94b; --bad:#fc8181;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif;}
+  .topbar{
+    display:flex; align-items:center; gap:24px; padding:14px 24px;
+    background:var(--panel); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10;
+  }
+  .topbar h1{font-size:15px; margin:0; color:var(--text); font-weight:600;}
+  .tabs{display:flex; gap:4px;}
+  .tab{padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px; color:var(--muted); border:1px solid transparent;}
+  .tab.active{background:var(--panel-2); color:var(--accent); border-color:var(--border);}
+  .status{margin-left:auto; font-size:12px; color:var(--muted);}
+  .page{display:none; padding:24px; max-width:1400px; margin:0 auto;}
+  .page.active{display:block;}
+  .row{display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap;}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; flex:1; min-width:180px;}
+  .card .label{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:8px;}
+  .card .value{font-size:32px; font-weight:700; color:var(--accent);}
+  .card .value.warn{color:var(--accent-2);}
+  .panel{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; flex:1; min-width:320px;}
+  .panel h3{margin:0 0 4px; font-size:14px;}
+  .panel .sub{font-size:11px; color:var(--muted); margin-bottom:14px;}
+  .half{flex:1; min-width:320px;}
+  canvas{max-height:320px;}
+  table{width:100%; border-collapse:collapse; font-size:12px;}
+  th,td{padding:8px 10px; text-align:left; border-bottom:1px solid var(--border);}
+  th{color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase;}
+  .loading{color:var(--muted); font-size:12px; padding:20px; text-align:center;}
+  .error{color:var(--bad); font-size:12px; padding:10px; background:rgba(252,129,129,.1); border-radius:6px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Qualité de l'Air — Madagascar</h1>
+  <div class="tabs">
+    <div class="tab active" onclick="showPage(1,this)">Vue d'ensemble</div>
+    <div class="tab" onclick="showPage(2,this)">Comparaison villes</div>
+    <div class="tab" onclick="showPage(3,this)">Qualité des données</div>
+  </div>
+  <div class="status" id="status">Chargement...</div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+  <div class="row" id="kpiCards"><div class="loading">Chargement des indicateurs...</div></div>
+  <div class="row">
+    <div class="panel half">
+      <h3>AQI par ville</h3>
+      <div class="sub">Taille du point = AQI moyen</div>
+      <canvas id="cityBubble"></canvas>
+    </div>
+    <div class="panel half">
+      <h3>Évolution de l'AQI</h3>
+      <div class="sub">Moyenne journalière par ville</div>
+      <canvas id="lineChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+  <div class="row">
+    <div class="panel half">
+      <h3>AQI moyen par ville</h3>
+      <div class="sub">Trié décroissant</div>
+      <canvas id="barCities"></canvas>
+    </div>
+    <div class="panel half">
+      <h3>Polluants par ville</h3>
+      <div class="sub">PM2.5 / PM10 / NO2 / O3 (µg/m³)</div>
+      <canvas id="stackedChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+  <div class="row" id="qualityCards"><div class="loading">Chargement...</div></div>
+  <div class="row">
+    <div class="panel" style="flex:2;">
+      <h3>% Données manquantes par ville</h3>
+      <canvas id="missingChart"></canvas>
+    </div>
+    <div class="panel half">
+      <h3>Récap</h3>
+      <table id="recapTable"><tbody><tr><td class="loading">Chargement...</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(n, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page'+n).classList.add('active');
+  el.classList.add('active');
+}
+
+const palette = ['#4fd1c5','#f6ad55','#fc8181','#63b3ed','#68d391','#b794f4','#f687b3'];
+const axisColor = '#8a97a8', gridColor = '#2a3441';
+const chartDefaults = {
+  scales:{ x:{ticks:{color:axisColor}, grid:{color:gridColor}}, y:{ticks:{color:axisColor}, grid:{color:gridColor}} },
+  plugins:{ legend:{labels:{color:axisColor, boxWidth:10, font:{size:10}}} }
+};
+
+async function fetchJSON(url){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error(`${url} -> ${r.status}`);
+  return r.json();
+}
+
+async function init(){
+  const statusEl = document.getElementById('status');
+  try{
+    const [kpis, cities, timeseries, pollutants, missing] = await Promise.all([
+      fetchJSON('/api/kpis'),
+      fetchJSON('/api/cities'),
+      fetchJSON('/api/timeseries'),
+      fetchJSON('/api/pollutants'),
+      fetchJSON('/api/missing'),
+    ]);
+    statusEl.textContent = 'Données à jour';
+
+    // --- KPI cards (page 1) ---
+    document.getElementById('kpiCards').innerHTML = `
+      <div class="card"><div class="label">AQI Moyen</div><div class="value">${kpis.avg_aqi?.toFixed(2) ?? '—'}</div></div>
+      <div class="card"><div class="label">AQI Max</div><div class="value warn">${kpis.max_aqi ?? '—'}</div></div>
+      <div class="card"><div class="label">Nb Mesures</div><div class="value">${kpis.nb_mesures?.toLocaleString('fr-FR') ?? '—'}</div></div>
+    `;
+
+    // --- City bubble (page 1) ---
+    new Chart(document.getElementById('cityBubble'), {
+      type:'bubble',
+      data:{ datasets: cities.map((c,i)=>({
+        label:c.city_name,
+        data:[{x:c.lon, y:c.lat, r: Math.max(6, c.avg_aqi*5)}],
+        backgroundColor: palette[i % palette.length]
+      }))},
+      options:{ ...chartDefaults, scales:{
+        x:{title:{display:true,text:'Longitude',color:axisColor}, ticks:{color:axisColor}, grid:{color:gridColor}},
+        y:{title:{display:true,text:'Latitude',color:axisColor}, ticks:{color:axisColor}, grid:{color:gridColor}}
+      }}
+    });
+
+    // --- Line chart (page 1) ---
+    const cityNames = [...new Set(timeseries.map(r=>r.city_name))];
+    const dates = [...new Set(timeseries.map(r=>r.full_date))].sort();
+    new Chart(document.getElementById('lineChart'), {
+      type:'line',
+      data:{ labels: dates, datasets: cityNames.map((name,i)=>({
+        label:name, borderColor:palette[i%palette.length], backgroundColor:palette[i%palette.length],
+        data: dates.map(d => {
+          const row = timeseries.find(r=>r.city_name===name && r.full_date===d);
+          return row ? row.avg_aqi : null;
+        }),
+        spanGaps:true, tension:.3, pointRadius:0
+      }))},
+      options: chartDefaults
+    });
+
+    // --- Bar cities (page 2) ---
+    const sortedCities = [...cities].sort((a,b)=>b.avg_aqi - a.avg_aqi);
+    new Chart(document.getElementById('barCities'), {
+      type:'bar',
+      data:{ labels: sortedCities.map(c=>c.city_name), datasets:[{
+        data: sortedCities.map(c=>c.avg_aqi), backgroundColor: palette
+      }]},
+      options:{ ...chartDefaults, indexAxis:'y', plugins:{legend:{display:false}} }
+    });
+
+    // --- Stacked pollutants (page 2) ---
+    new Chart(document.getElementById('stackedChart'), {
+      type:'bar',
+      data:{ labels: pollutants.map(p=>p.city_name), datasets:[
+        {label:'PM2.5', data: pollutants.map(p=>p.pm2_5), backgroundColor:'#4fd1c5'},
+        {label:'PM10', data: pollutants.map(p=>p.pm10), backgroundColor:'#f6ad55'},
+        {label:'NO2', data: pollutants.map(p=>p.no2), backgroundColor:'#fc8181'},
+        {label:'O3', data: pollutants.map(p=>p.o3), backgroundColor:'#63b3ed'}
+      ]},
+      options:{ ...chartDefaults, scales:{
+        x:{stacked:true, ticks:{color:axisColor}, grid:{display:false}},
+        y:{stacked:true, ticks:{color:axisColor}, grid:{color:gridColor}}
+      }}
+    });
+
+    // --- Quality cards (page 3) ---
+    document.getElementById('qualityCards').innerHTML = `
+      <div class="card"><div class="label">% Données Manquantes</div><div class="value warn">${kpis.missing_pct?.toFixed(1) ?? '—'}%</div></div>
+      <div class="card"><div class="label">Mesures Interpolées</div><div class="value">${kpis.nb_interpolated?.toLocaleString('fr-FR') ?? '—'}</div></div>
+      <div class="card"><div class="label">Villes Couvertes</div><div class="value">${cities.length}</div></div>
+    `;
+
+    // --- Missing chart (page 3) ---
+    const sortedMissing = [...missing].sort((a,b)=>b.missing_pct - a.missing_pct);
+    new Chart(document.getElementById('missingChart'), {
+      type:'bar',
+      data:{ labels: sortedMissing.map(m=>m.city_name), datasets:[{
+        data: sortedMissing.map(m=>m.missing_pct), backgroundColor: palette
+      }]},
+      options:{ ...chartDefaults, indexAxis:'y', plugins:{legend:{display:false}} }
+    });
+
+    // --- Recap table (page 3) ---
+    document.getElementById('recapTable').innerHTML = `
+      <tr><th>Ville</th><th>Mesures</th><th>Manquant</th></tr>
+      ${missing.map(m=>`<tr><td>${m.city_name}</td><td>${m.nb_mesures.toLocaleString('fr-FR')}</td><td>${m.missing_pct.toFixed(1)}%</td></tr>`).join('')}
+    `;
+
+  } catch(err){
+    console.error(err);
+    statusEl.textContent = 'Erreur de chargement';
+    document.getElementById('kpiCards').innerHTML = `<div class="error">Erreur: ${err.message}. Vérifie que DATABASE_URL est bien configurée dans les variables d'environnement Vercel.</div>`;
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>
