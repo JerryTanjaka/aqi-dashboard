@@ -14,3 +14,11 @@ export async function loadAllData() {
   ])
   return { kpis, cities, timeseries, pollutants, missing }
 }
+
+export function loadPatterns() {
+  return fetchJSON('/api/patterns')
+}
+
+export function loadCorrelations() {
+  return fetchJSON('/api/correlations')
+}
