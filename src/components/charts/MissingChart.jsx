@@ -1,0 +1,44 @@
+import { Bar } from 'react-chartjs-2'
+import { useTheme } from '../../context/ThemeContext'
+import { cssVar, palette } from '../../lib/theme'
+
+export default function MissingChart({ missing }) {
+  useTheme()
+  const axis = cssVar('--muted')
+  const grid = cssVar('--border')
+  const sorted = [...missing].sort((a, b) => b.missing_pct - a.missing_pct)
+  const hasMissing = sorted.some((m) => m.missing_pct > 0)
+
+  if (!hasMissing) {
+    return (
+      <div className="flex h-72 items-center justify-center rounded-lg border border-border bg-panel-2/50">
+        <div className="text-center">
+          <p className="text-3xl text-good">&#10003;</p>
+          <p className="mt-1 text-sm font-medium">Aucune donnée manquante</p>
+          <p className="text-xs text-muted">Toutes les villes ont des mesures complètes</p>
+        </div>
+      </div>
+    )
+  }
+
+  const data = {
+    labels: sorted.map((m) => m.city_name),
+    datasets: [{ data: sorted.map((m) => m.missing_pct), backgroundColor: palette }],
+  }
+
+  const options = {
+    indexAxis: 'y',
+    maintainAspectRatio: false,
+    scales: {
+      x: { ticks: { color: axis }, grid: { color: grid } },
+      y: { ticks: { color: axis }, grid: { color: grid } },
+    },
+    plugins: { legend: { display: false } },
+  }
+
+  return (
+    <div className="h-72">
+      <Bar data={data} options={options} />
+    </div>
+  )
+}
