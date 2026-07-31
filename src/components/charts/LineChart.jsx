@@ -9,6 +9,9 @@ export default function LineChart({ timeseries }) {
 
   const cityNames = [...new Set(timeseries.map((r) => r.city_name))]
   const dates = [...new Set(timeseries.map((r) => r.full_date))].sort()
+  const values = timeseries.map((r) => r.avg_aqi).filter((v) => v != null)
+  const lo = Math.min(...values)
+  const hi = Math.max(...values)
 
   const data = {
     labels: dates.map(formatDate),
@@ -23,7 +26,7 @@ export default function LineChart({ timeseries }) {
       spanGaps: true,
       tension: 0.3,
       pointRadius: 0,
-      borderWidth: 2,
+      borderWidth: 2.5,
     })),
   }
 
@@ -38,9 +41,18 @@ export default function LineChart({ timeseries }) {
         title: { display: true, text: 'AQI moyen', color: axis },
         ticks: { color: axis },
         grid: { color: grid },
+        suggestedMin: Math.floor((lo - 0.02) * 10) / 10,
+        suggestedMax: Math.ceil((hi + 0.02) * 10) / 10,
       },
     },
-    plugins: { legend: { labels: { color: axis, boxWidth: 10, font: { size: 10 } } } },
+    plugins: {
+      legend: { labels: { color: axis, boxWidth: 10, font: { size: 10 } } },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.dataset.label}: ${Number(ctx.parsed.y).toFixed(3)}`,
+        },
+      },
+    },
   }
 
   return (
