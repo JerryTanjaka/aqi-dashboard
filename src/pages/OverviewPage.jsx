@@ -21,7 +21,7 @@ export default function OverviewPage({ data }) {
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel
           title="Position des villes (géographique)"
-          subtitle="Longitude et latitude = emplacement · Taille du point = AQI moyen (plus gros = plus pollué)"
+          subtitle="Longitude/Latitude = emplacement · Taille + couleur = AQI moyen (échelle relative aux 5 villes, du vert au rouge)"
         >
           <CityBubble cities={data.cities} />
         </Panel>

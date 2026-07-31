@@ -1,6 +1,6 @@
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cssVar, monthNames, monthOrder, palette } from '../../lib/theme'
+import { cityColor, cssVar, monthNames, monthOrder } from '../../lib/theme'
 
 export default function MonthlyLine({ rows }) {
   useTheme()
@@ -29,12 +29,13 @@ export default function MonthlyLine({ rows }) {
     }),
     datasets: cityNames.map((name, i) => ({
       label: name,
-      borderColor: palette[i % palette.length],
-      backgroundColor: palette[i % palette.length],
+      borderColor: cityColor(name, i),
+      backgroundColor: cityColor(name, i),
       data: keys.map((k) => get(name, k)),
       spanGaps: true,
       tension: 0.3,
       pointRadius: 2,
+      borderWidth: 2,
     })),
   }
 

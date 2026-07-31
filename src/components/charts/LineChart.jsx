@@ -1,6 +1,6 @@
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cssVar, formatDate, palette } from '../../lib/theme'
+import { cityColor, cssVar, formatDate } from '../../lib/theme'
 
 export default function LineChart({ timeseries }) {
   useTheme()
@@ -14,8 +14,8 @@ export default function LineChart({ timeseries }) {
     labels: dates.map(formatDate),
     datasets: cityNames.map((name, i) => ({
       label: name,
-      borderColor: palette[i % palette.length],
-      backgroundColor: palette[i % palette.length],
+      borderColor: cityColor(name, i),
+      backgroundColor: cityColor(name, i),
       data: dates.map((d) => {
         const row = timeseries.find((r) => r.city_name === name && r.full_date === d)
         return row ? row.avg_aqi : null
@@ -23,6 +23,7 @@ export default function LineChart({ timeseries }) {
       spanGaps: true,
       tension: 0.3,
       pointRadius: 0,
+      borderWidth: 2,
     })),
   }
 
@@ -30,10 +31,14 @@ export default function LineChart({ timeseries }) {
     maintainAspectRatio: false,
     scales: {
       x: {
-        ticks: { color: axis, maxTicksLimit: 12, maxRotation: 0 },
+        ticks: { color: axis, maxTicksLimit: 12, maxRotation: 0, autoSkip: true },
         grid: { color: grid },
       },
-      y: { ticks: { color: axis }, grid: { color: grid } },
+      y: {
+        title: { display: true, text: 'AQI moyen', color: axis },
+        ticks: { color: axis },
+        grid: { color: grid },
+      },
     },
     plugins: { legend: { labels: { color: axis, boxWidth: 10, font: { size: 10 } } } },
   }

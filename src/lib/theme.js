@@ -1,5 +1,37 @@
 export const palette = ['#2dd4bf', '#fbbf24', '#818cf8', '#fb7185', '#34d399']
 
+export const cityColors = {
+  Antananarivo: '#2dd4bf',
+  Toliara: '#fb7185',
+  Toamasina: '#818cf8',
+  Mahajanga: '#fbbf24',
+  Antsiranana: '#34d399',
+}
+
+export function cityColor(name, i) {
+  return cityColors[name] || palette[i % palette.length]
+}
+
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+
+function lerp(a, b, t) {
+  return Math.round(a + (b - a) * t)
+}
+
+export function lerpColor(c1, c2, t) {
+  const a = hexToRgb(c1)
+  const b = hexToRgb(c2)
+  return `rgb(${lerp(a[0], b[0], t)}, ${lerp(a[1], b[1], t)}, ${lerp(a[2], b[2], t)})`
+}
+
+export function aqiColor(t) {
+  if (t < 0.5) return lerpColor('#34d399', '#fbbf24', t * 2)
+  return lerpColor('#fbbf24', '#fb7185', (t - 0.5) * 2)
+}
+
 export const pollutantColors = {
   pm2_5: '#2dd4bf',
   pm10: '#fbbf24',

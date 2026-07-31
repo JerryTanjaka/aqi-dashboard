@@ -1,6 +1,6 @@
 import { Scatter } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cssVar, palette } from '../../lib/theme'
+import { cssVar, cityColor } from '../../lib/theme'
 
 export default function ScatterChart({ samples }) {
   useTheme()
@@ -14,7 +14,7 @@ export default function ScatterChart({ samples }) {
       data: samples
         .filter((s) => s.city_name === city)
         .map((s) => ({ x: s.pm2_5, y: s.aqi })),
-      backgroundColor: palette[i % palette.length],
+      backgroundColor: cityColor(city, i),
       pointRadius: 4,
     })),
   }
