@@ -4,8 +4,8 @@ import StackedPollutants from '../components/charts/StackedPollutants'
 
 export default function ComparePage({ data }) {
   return (
-    <main className="mx-auto max-w-7xl p-6">
-      <div className="flex flex-wrap gap-4">
+    <main className="fade-in mx-auto max-w-7xl p-6 md:p-8">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel title="AQI moyen par ville" subtitle="Trié décroissant">
           <BarCities cities={data.cities} />
         </Panel>

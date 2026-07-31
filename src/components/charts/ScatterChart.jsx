@@ -1,18 +1,21 @@
-import { Bubble } from 'react-chartjs-2'
+import { Scatter } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
 import { cssVar, palette } from '../../lib/theme'
 
-export default function CityBubble({ cities }) {
+export default function ScatterChart({ samples }) {
   useTheme()
   const axis = cssVar('--muted')
   const grid = cssVar('--grid')
+  const cities = [...new Set(samples.map((s) => s.city_name))]
 
   const data = {
     datasets: cities.map((city, i) => ({
-      label: city.city_name,
-      data: [{ x: city.lon, y: city.lat, r: Math.max(10, Math.sqrt(city.avg_aqi) * 14) }],
+      label: city,
+      data: samples
+        .filter((s) => s.city_name === city)
+        .map((s) => ({ x: s.pm2_5, y: s.aqi })),
       backgroundColor: palette[i % palette.length],
-      borderColor: palette[i % palette.length],
+      pointRadius: 4,
     })),
   }
 
@@ -20,12 +23,12 @@ export default function CityBubble({ cities }) {
     maintainAspectRatio: false,
     scales: {
       x: {
-        title: { display: true, text: 'Longitude', color: axis },
+        title: { display: true, text: 'PM2.5 (µg/m³)', color: axis },
         ticks: { color: axis },
         grid: { color: grid },
       },
       y: {
-        title: { display: true, text: 'Latitude', color: axis },
+        title: { display: true, text: 'AQI', color: axis },
         ticks: { color: axis },
         grid: { color: grid },
       },
@@ -34,8 +37,8 @@ export default function CityBubble({ cities }) {
   }
 
   return (
-    <div className="h-72">
-      <Bubble data={data} options={options} />
+    <div className="h-80">
+      <Scatter data={data} options={options} />
     </div>
   )
 }

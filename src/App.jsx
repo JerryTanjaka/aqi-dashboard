@@ -6,11 +6,15 @@ import LoadingState from './components/LoadingState'
 import OverviewPage from './pages/OverviewPage'
 import ComparePage from './pages/ComparePage'
 import QualityPage from './pages/QualityPage'
+import TemporalPage from './pages/TemporalPage'
+import CorrelationsPage from './pages/CorrelationsPage'
 
 const pages = {
   overview: OverviewPage,
   compare: ComparePage,
   quality: QualityPage,
+  temporal: TemporalPage,
+  correlations: CorrelationsPage,
 }
 
 function Dashboard() {
@@ -30,7 +34,7 @@ function Dashboard() {
   const ActivePage = pages[page]
 
   return (
-    <div className="min-h-screen bg-surface text-ink">
+    <div className="min-h-screen text-ink">
       <TopBar
         page={page}
         onPageChange={setPage}

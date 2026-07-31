@@ -5,13 +5,16 @@ import RecapTable from '../components/RecapTable'
 
 export default function QualityPage({ data }) {
   return (
-    <main className="mx-auto max-w-7xl p-6">
+    <main className="fade-in mx-auto max-w-7xl p-6 md:p-8">
       <QualityCards kpis={data.kpis} cities={data.cities} />
-      <div className="mt-4 flex flex-wrap gap-4">
-        <Panel title="% Données manquantes par ville" className="flex-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Panel
+          title="% Données manquantes par ville"
+          className="lg:col-span-2"
+        >
           <MissingChart missing={data.missing} />
         </Panel>
-        <Panel title="Récap" className="min-w-80 flex-1">
+        <Panel title="Récap">
           <RecapTable missing={data.missing} />
         </Panel>
       </div>

@@ -1,17 +1,17 @@
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cssVar, palette } from '../../lib/theme'
+import { cssVar, formatDate, palette } from '../../lib/theme'
 
 export default function LineChart({ timeseries }) {
   useTheme()
   const axis = cssVar('--muted')
-  const grid = cssVar('--border')
+  const grid = cssVar('--grid')
 
   const cityNames = [...new Set(timeseries.map((r) => r.city_name))]
   const dates = [...new Set(timeseries.map((r) => r.full_date))].sort()
 
   const data = {
-    labels: dates,
+    labels: dates.map(formatDate),
     datasets: cityNames.map((name, i) => ({
       label: name,
       borderColor: palette[i % palette.length],
@@ -29,7 +29,10 @@ export default function LineChart({ timeseries }) {
   const options = {
     maintainAspectRatio: false,
     scales: {
-      x: { ticks: { color: axis }, grid: { color: grid } },
+      x: {
+        ticks: { color: axis, maxTicksLimit: 12, maxRotation: 0 },
+        grid: { color: grid },
+      },
       y: { ticks: { color: axis }, grid: { color: grid } },
     },
     plugins: { legend: { labels: { color: axis, boxWidth: 10, font: { size: 10 } } } },

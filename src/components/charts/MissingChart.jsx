@@ -5,16 +5,16 @@ import { cssVar, palette } from '../../lib/theme'
 export default function MissingChart({ missing }) {
   useTheme()
   const axis = cssVar('--muted')
-  const grid = cssVar('--border')
+  const grid = cssVar('--grid')
   const sorted = [...missing].sort((a, b) => b.missing_pct - a.missing_pct)
   const hasMissing = sorted.some((m) => m.missing_pct > 0)
 
   if (!hasMissing) {
     return (
-      <div className="flex h-72 items-center justify-center rounded-lg border border-border bg-panel-2/50">
+      <div className="flex h-72 items-center justify-center rounded-xl border border-border bg-panel-2/50">
         <div className="text-center">
-          <p className="text-3xl text-good">&#10003;</p>
-          <p className="mt-1 text-sm font-medium">Aucune donnée manquante</p>
+          <p className="text-4xl text-good">&#10003;</p>
+          <p className="mt-2 text-sm font-medium">Aucune donnée manquante</p>
           <p className="text-xs text-muted">Toutes les villes ont des mesures complètes</p>
         </div>
       </div>
@@ -30,7 +30,7 @@ export default function MissingChart({ missing }) {
     indexAxis: 'y',
     maintainAspectRatio: false,
     scales: {
-      x: { ticks: { color: axis }, grid: { color: grid } },
+      x: { title: { display: true, text: '%', color: axis }, ticks: { color: axis }, grid: { color: grid } },
       y: { ticks: { color: axis }, grid: { color: grid } },
     },
     plugins: { legend: { display: false } },

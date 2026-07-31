@@ -5,7 +5,7 @@ import { cssVar, palette } from '../../lib/theme'
 export default function BarCities({ cities }) {
   useTheme()
   const axis = cssVar('--muted')
-  const grid = cssVar('--border')
+  const grid = cssVar('--grid')
   const sorted = [...cities].sort((a, b) => b.avg_aqi - a.avg_aqi)
 
   const data = {
@@ -17,7 +17,7 @@ export default function BarCities({ cities }) {
     indexAxis: 'y',
     maintainAspectRatio: false,
     scales: {
-      x: { ticks: { color: axis }, grid: { color: grid } },
+      x: { title: { display: true, text: 'AQI moyen', color: axis }, ticks: { color: axis }, grid: { color: grid } },
       y: { ticks: { color: axis }, grid: { color: grid } },
     },
     plugins: { legend: { display: false } },
