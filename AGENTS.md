@@ -2,32 +2,37 @@
 
 ## Contexte projet
 
-Dashboard de qualité de l'air (AQI) pour Madagascar. Frontend statique
-(public/index.html, Chart.js) + Serverless Functions Vercel (api/*.js) qui
-interrogent une base Postgres Neon via le package `pg`.
+Dashboard de qualité de l'air (AQI) pour Madagascar. Frontend React + Vite +
+Tailwind CSS (compilé) + Chart.js (react-chartjs-2). Serverless Functions
+Vercel (api/*.js) qui interrogent une base Postgres Neon via le package `pg`.
 
 ## Structure
 
-- `api/kpis.js` — AQI moyen/max, nb mesures, % manquant, nb interpolé
-- `api/cities.js` — AQI moyen par ville (city_name, lat, lon)
-- `api/timeseries.js` — évolution journalière de l'AQI par ville
-- `api/pollutants.js` — moyennes pm2_5, pm10, no2, o3, co, so2, nh3 par ville
-- `api/missing.js` — % données manquantes + interpolées par ville
+- `api/*.js` — 5 fonctions serverless : `kpis`, `cities`, `timeseries`,
+  `pollutants`, `missing`
 - `lib/db.js` — pool pg partagé, `max: 3`, SSL, lit `DATABASE_URL`
-- `public/index.html` — frontend, fetch `/api/*`, 3 onglets Chart.js
-
-## Base de données (Neon Postgres)
-
-- `fact_air_quality` (fact_id, city_id, time_id, dt, aqi, co, no, no2, o3,
-  so2, pm2_5, pm10, nh3, has_missing_pollutant, dt_interpolated, inserted_at)
-- `dim_city` (city_id, city_name, lat, lon, country)
-- `dim_time` (time_id, full_date, hour, year, month, month_name, day,
-  day_of_week, day_name, is_weekend)
+- `src/main.jsx` — point d'entrée React (monte App + Chart.js register)
+- `src/App.jsx` — layout, chargement des données (`loadAllData`), onglets
+- `src/pages/` — 3 pages : `OverviewPage`, `ComparePage`, `QualityPage`
+- `src/components/` — TopBar, KpiCards, QualityCards, RecapTable, Panel,
+  Card, LoadingState
+- `src/components/charts/` — CityBubble, LineChart, BarCities,
+  StackedPollutants, MissingChart
+- `src/lib/api.js` — fetch des 5 endpoints en parallèle
+- `src/lib/theme.js` — palette Chart.js + lecture des CSS vars
+- `src/context/ThemeContext.jsx` — mode clair/sombre persistant
+- `src/styles.css` — Tailwind v4, thèmes clair/sombre (`.dark`),
+  tokens de couleurs (`--color-surface`, `--color-panel`, ...)
+- `index.html` — entrée Vite (racine)
+- `vite.config.js` — proxy `/api` → localhost:3000
+- `vercel.json` — framework vite, install/dev/build commands npm
 
 ## Commandes
 
 - Install : `npm install`
-- Dev local : `vercel dev` (charge `.env`, serveur sur http://localhost:3000)
+- Dev frontend : `npm run dev` (Vite, port 5173, HMR)
+- Dev API (connexion DB requise) : `npm run dev:api` (`vercel dev`, port 3000)
+- Build : `npm run build`
 - Deploy : `vercel --prod`
 - Env vars : `vercel env add NAME production` (valeur via stdin)
 
@@ -38,16 +43,21 @@ interrogent une base Postgres Neon via le package `pg`.
 
 ## Points d'attention
 
-- Le pooler Neon (`-pooler`) peut être injoignable selon le réseau :
-  utiliser l'hôte direct `ep-...-asbfmbxg.c-4...neon.tech` si ETIMEDOUT.
+- **Test local** : les requêtes API locales échouent si le réseau local
+  bloque le port 5432 (wifi du dev). L'hôte direct
+  `ep-...-asbfmbxg.c-4...neon.tech` fonctionne, le pooler (`-pooler`)
+  peut donner ETIMEDOUT.
 - `channel_binding=require` dans la chaîne Neon : peut poser problème avec
   `pg`, l'omettre si échec.
 - CORS ouvert (`Access-Control-Allow-Origin: *`), erreurs SQL renvoyées
   telles quelles dans les 500 (acceptable, données publiques).
 - Pool limité à `max: 3` (serverless, tier Neon gratuit).
+- La base ne contient aucune donnée manquante (missing_pct=0 partout) :
+  `MissingChart` affiche un message quand tout est à 0.
 
 ## Déploiement actuel
 
 - Projet Vercel : `jerrytanjakas-projects/aqi-dashboard`
 - Production : https://aqi-dashboard-olive.vercel.app
 - Compte : jerrytanjaka
+- Repo GitHub : `JerryTanjaka/aqi-dashboard`
