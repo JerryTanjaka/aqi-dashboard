@@ -30,7 +30,7 @@ export default function FilterBar() {
     }`
 
   return (
-    <div className="sticky top-[54px] z-10 border-b border-border bg-panel/70 px-6 py-2.5 backdrop-blur">
+    <div className="sticky top-[68px] z-10 border-b border-border bg-panel/70 px-6 py-2.5 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3">
         <div className="flex rounded-full border border-border bg-panel-2 p-1">
           {[
