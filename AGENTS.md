@@ -10,20 +10,31 @@ Vercel (api/*.js) qui interrogent une base Postgres Neon via le package `pg`.
 
 - `api/*.js` — 7 fonctions serverless : `kpis`, `cities`, `timeseries`,
   `pollutants`, `missing`, `patterns` (heatmap/weekend/monthly),
-  `correlations` (samples + averages)
+  `correlations` (samples + averages + matrice 8x8). Toutes acceptent les
+  query params `?city=` (multi, virgule), `?from=`, `?to=` (YYYY-MM-DD).
 - `lib/db.js` — pool pg partagé, `max: 3`, SSL, lit `DATABASE_URL`
+- `lib/filters.js` — helper CommonJS `buildFilters`/`whereClause` : placeholders
+  `$n` (pg), alias `c`=dim_city, `t`=dim_time
 - `src/main.jsx` — point d'entrée React (monte App + Chart.js register)
-- `src/App.jsx` — layout, chargement des données (`loadAllData`), onglets
-- `src/pages/` — 5 pages : `OverviewPage`, `ComparePage`, `QualityPage`,
+- `src/App.jsx` — layout, chargement des données (`loadAllData`) refetché à
+  chaque changement de filtres, navigation selon le mode
+- `src/context/FilterContext.jsx` — état global : mode (`debutant`|`expert`),
+  ville, période (présets + libres), `filtersKey`, `globalRange` (échelle santé
+  figée sur le 1er chargement sans filtre)
+- `src/components/FilterBar.jsx` — toggle Débutant/Expert, sélecteur ville
+  (liste complète chargée à part), présets 7j/30j/90j/1an/Tout, champs from/to
+- `src/pages/` — 5 pages Expert : `OverviewPage`, `ComparePage`, `QualityPage`,
   `TemporalPage` (heatmap heure×jour, weekend, mensuel), `CorrelationsPage`
-  (scatter PM2.5/AQI, bar polluants, table)
-- `src/components/` — TopBar, KpiCards, QualityCards, RecapTable, Panel,
-  Card, LoadingState, PollutantTable
+  (scatter PM2.5/AQI + r, bar polluants, matrice 8x8, table). 3 pages Débutant :
+  `DebutantHomePage`, `DebutantCityPage`, `DebutantTrendPage`
+- `src/components/` — TopBar, FilterBar, KpiCards, QualityCards, RecapTable,
+  Panel, Card, LoadingState, PollutantTable, AqiGauge, HealthBadge, ChartWhy
 - `src/components/charts/` — CityBubble, LineChart, BarCities,
   StackedPollutants, MissingChart, Heatmap, WeekendBar, MonthlyLine,
-  ScatterChart, PollutantBar
-- `src/lib/api.js` — fetch des 7 endpoints (5 en parallèle + lazy pour les 2 nouvelles pages)
+  ScatterChart, PollutantBar, DonutCityShare, DonutPollutants, CorrelationsMatrix
+- `src/lib/api.js` — fetch des 7 endpoints (params filtrés) + helpers `qs`
 - `src/lib/theme.js` — palette Chart.js, noms de jours/mois FR, format de date, CSS vars
+- `src/lib/health.js` — 5 paliers santé relatifs (min/max) + recommandations FR
 - `src/context/ThemeContext.jsx` — mode clair/sombre persistant
 - `src/styles.css` — Tailwind v4, thèmes clair/sombre (`.dark`), fond en
   dégradé, tokens de couleurs (`--color-accent`, `--color-grid`, ...)
@@ -58,10 +69,12 @@ Vercel (api/*.js) qui interrogent une base Postgres Neon via le package `pg`.
 - Pool limité à `max: 3` (serverless, tier Neon gratuit).
 - La base ne contient aucune donnée manquante (missing_pct=0 partout) :
   `MissingChart` affiche un message quand tout est à 0.
+- Les placeholders de filtres DOIVENT être `$n` (pg), jamais `?` (sinon 500).
+- Plage de données réelle : 2025-08-01 → 2026-07-31 (tests from/to avec cette plage).
 
 ## Déploiement actuel
 
-- Projet Vercel : `jerrytanjakas-projects/aqi-dashboard`
-- Production : https://aqi-dashboard-olive.vercel.app
+- Projet Vercel : `jerrytanjakas-projects/aqi-dashboard` (alias `aqi-std24015`)
+- Production : https://aqi-std24015.vercel.app
 - Compte : jerrytanjaka
 - Repo GitHub : `JerryTanjaka/aqi-dashboard`

@@ -1,6 +1,8 @@
 import Panel from '../components/Panel'
+import ChartWhy from '../components/ChartWhy'
 import BarCities from '../components/charts/BarCities'
 import StackedPollutants from '../components/charts/StackedPollutants'
+import DonutPollutants from '../components/charts/DonutPollutants'
 
 const pollutants = [
   { name: 'PM2.5', desc: 'Particules fines de moins de 2,5 µm. Pénètrent profondément dans les poumons et le sang.' },
@@ -18,9 +20,29 @@ export default function ComparePage({ data }) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel title="AQI moyen par ville" subtitle="Trié décroissant">
           <BarCities cities={data.cities} />
+          <ChartWhy>
+            Histogramme : la hauteur des barres rend la comparaison entre les 5 villes immédiate, précise et
+            ordonnée.
+          </ChartWhy>
         </Panel>
         <Panel title="Polluants par ville" subtitle="PM2.5 / PM10 / NO2 / O3 (µg/m³)">
           <StackedPollutants rows={data.pollutants} />
+          <ChartWhy>
+            Les barres empilées montrent à la fois le total de pollution par ville et la part de chaque polluant.
+          </ChartWhy>
+        </Panel>
+      </div>
+      <div className="mt-6">
+        <Panel title="Répartition moyenne des polluants" subtitle="Part de chaque polluant (µg/m³)">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <DonutPollutants rows={data.pollutants} />
+            <div className="flex flex-col justify-center gap-2">
+              <ChartWhy>
+                Diagramme circulaire : avec seulement 4 polluants, les parts d'un tout se comparent d'un coup
+                d'œil, ce qu'un tableau ne permet pas.
+              </ChartWhy>
+            </div>
+          </div>
         </Panel>
       </div>
       <div className="mt-6">

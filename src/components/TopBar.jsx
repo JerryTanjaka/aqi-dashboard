@@ -1,6 +1,6 @@
 import { useTheme } from '../context/ThemeContext'
 
-const tabs = [
+const expertTabs = [
   { id: 'overview', label: "Vue d'ensemble" },
   { id: 'compare', label: 'Comparaison villes' },
   { id: 'quality', label: 'Qualité des données' },
@@ -8,11 +8,18 @@ const tabs = [
   { id: 'correlations', label: 'Corrélations polluants' },
 ]
 
-export default function TopBar({ page, onPageChange, status }) {
+const debutantTabs = [
+  { id: 'accueil', label: 'Accueil' },
+  { id: 'ma-ville', label: 'Ma ville' },
+  { id: 'evolution', label: 'Évolution' },
+]
+
+export default function TopBar({ page, onPageChange, mode, status }) {
   const { theme, toggleTheme } = useTheme()
+  const tabs = mode === 'debutant' ? debutantTabs : expertTabs
 
   return (
-    <header className="sticky top-0 z-10 flex flex-wrap items-center gap-4 border-b border-border bg-white/70 px-6 py-3.5 backdrop-blur dark:bg-slate-950/70">
+    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-border bg-white/70 px-6 py-3.5 backdrop-blur dark:bg-slate-950/70">
       <h1 className="text-sm font-semibold">Qualité de l'Air — Madagascar</h1>
       <nav className="flex flex-wrap gap-1">
         {tabs.map((tab) => (

@@ -1,22 +1,31 @@
 import { useEffect, useState } from 'react'
 import { loadPatterns } from '../lib/api'
+import { useFilters } from '../context/FilterContext'
 import Panel from '../components/Panel'
+import ChartWhy from '../components/ChartWhy'
 import Heatmap from '../components/charts/Heatmap'
 import WeekendBar from '../components/charts/WeekendBar'
 import MonthlyLine from '../components/charts/MonthlyLine'
 
 export default function TemporalPage() {
+  const { filterParams, filtersKey } = useFilters()
   const [patterns, setPatterns] = useState(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    loadPatterns()
-      .then(setPatterns)
+    let active = true
+    loadPatterns(filterParams)
+      .then((p) => {
+        if (active) setPatterns(p)
+      })
       .catch((err) => {
         console.error(err)
-        setError(err.message)
+        if (active) setError(err.message)
       })
-  }, [])
+    return () => {
+      active = false
+    }
+  }, [filtersKey])
 
   if (error) {
     return (
@@ -42,13 +51,24 @@ export default function TemporalPage() {
         className="mb-6 max-w-none"
       >
         <Heatmap rows={patterns.heatmap} />
+        <ChartWhy>
+          La heatmap est faite pour les matrices denses : l'intensité de la couleur révèle les moments critiques
+          (pics du matin/soir) impossible à repérer dans un tableau de chiffres.
+        </ChartWhy>
       </Panel>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel title="Weekend vs semaine" subtitle="AQI moyen par ville selon is_weekend">
           <WeekendBar rows={patterns.weekend} />
+          <ChartWhy>
+            Les barres groupées comparent deux catégories (week-end / semaine) par ville : on mesure l'effet de
+            l'activité humaine sur la pollution.
+          </ChartWhy>
         </Panel>
         <Panel title="Tendance mensuelle" subtitle="Évolution de l'AQI moyen par ville">
           <MonthlyLine rows={patterns.monthly} />
+          <ChartWhy>
+            La courbe mensuelle lisse les variations quotidiennes et dévoile les tendances saisonnières par ville.
+          </ChartWhy>
         </Panel>
       </div>
     </main>

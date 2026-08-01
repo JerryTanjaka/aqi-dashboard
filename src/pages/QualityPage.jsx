@@ -1,5 +1,6 @@
 import QualityCards from '../components/QualityCards'
 import Panel from '../components/Panel'
+import ChartWhy from '../components/ChartWhy'
 import MissingChart from '../components/charts/MissingChart'
 import RecapTable from '../components/RecapTable'
 
@@ -13,6 +14,10 @@ export default function QualityPage({ data }) {
           className="lg:col-span-2"
         >
           <MissingChart missing={data.missing} />
+          <ChartWhy>
+            La barre est idéale pour comparer des proportions entre villes : on repère instantanément si une ville
+            a des données incomplètes.
+          </ChartWhy>
         </Panel>
         <Panel title="Récap">
           <RecapTable missing={data.missing} />
