@@ -1,46 +1,67 @@
 import { useTheme } from '../context/ThemeContext'
+import { useLang } from '../context/LanguageContext'
 
-const expertTabs = [
-  { id: 'overview', label: "Vue d'ensemble" },
-  { id: 'compare', label: 'Comparaison villes' },
-  { id: 'quality', label: 'Qualité des données' },
-  { id: 'temporal', label: 'Patterns temporels' },
-  { id: 'correlations', label: 'Corrélations polluants' },
-]
+const expertTabs = ['overview', 'compare', 'quality', 'temporal', 'correlations']
+const debutantTabs = ['accueil', 'ma-ville', 'evolution']
 
-const debutantTabs = [
-  { id: 'accueil', label: 'Accueil' },
-  { id: 'ma-ville', label: 'Ma ville' },
-  { id: 'evolution', label: 'Évolution' },
-]
+const pill = 'rounded-full bg-white/90 px-2.5 py-1 text-sm font-semibold shadow-sm'
 
 export default function TopBar({ page, onPageChange, mode, status }) {
   const { theme, toggleTheme } = useTheme()
+  const { t, lang, setLang } = useLang()
   const tabs = mode === 'debutant' ? debutantTabs : expertTabs
 
   return (
-    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-emerald-900/10 bg-linear-to-r from-emerald-300 via-teal-400 to-cyan-500 px-6 py-3.5 backdrop-blur dark:border-white/10 dark:from-emerald-950 dark:via-teal-950 dark:to-slate-950">
-      <h1 className="text-sm font-semibold">Qualité de l'Air — Madagascar</h1>
+    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-emerald-900/10 bg-linear-to-r from-emerald-300 via-teal-400 to-cyan-500 px-6 py-3.5 backdrop-blur">
+      <h1 className="flex flex-wrap items-center gap-1.5 text-sm font-semibold">
+        {lang === 'fr' ? (
+          <>
+            <span className={`${pill} text-emerald-900`}>{t('brand.part1')}</span>
+            <span className={`${pill} text-sky-600`}>{t('brand.part2')}</span>
+          </>
+        ) : (
+          <>
+            <span className={`${pill} text-sky-600`}>{t('brand.part1')}</span>
+            <span className={`${pill} text-emerald-900`}>{t('brand.part2')}</span>
+          </>
+        )}
+        <span className={`${pill} text-emerald-900`}>{t('brand.madagascar')}</span>
+      </h1>
       <nav className="flex flex-wrap gap-1">
-        {tabs.map((tab) => (
+        {tabs.map((id) => (
           <button
-            key={tab.id}
-            onClick={() => onPageChange(tab.id)}
+            key={id}
+            onClick={() => onPageChange(id)}
             className={`cursor-pointer rounded-lg px-3.5 py-2 text-[13px] font-medium transition-all focus:outline-2 focus:outline-accent ${
-              page === tab.id
-                ? 'border border-emerald-800/25 bg-white/70 text-emerald-800 dark:border-white/30 dark:bg-white/15 dark:text-white'
-                : 'border border-transparent text-emerald-950/80 hover:bg-white/40 hover:text-emerald-950 dark:text-emerald-100/80 dark:hover:bg-white/10 dark:hover:text-white'
+              page === id
+                ? 'border border-emerald-800/25 bg-white/70 text-emerald-800'
+                : 'border border-transparent text-emerald-950/80 hover:bg-white/40 hover:text-emerald-950'
             }`}
           >
-            {tab.label}
+            {t(`tab.${id}`)}
           </button>
         ))}
       </nav>
-      <div className="ml-auto flex items-center gap-4">
-        <span className="text-xs text-emerald-950/70 dark:text-emerald-100/70">{status}</span>
+      <div className="ml-auto flex items-center gap-3">
+        <span className="text-xs text-emerald-950/70">{status}</span>
+        <div className="flex rounded-full border border-emerald-900/15 bg-white/70 p-1">
+          {['fr', 'en'].map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              className={`cursor-pointer rounded-full px-2.5 py-1 text-xs font-semibold transition-all focus:outline-2 focus:outline-accent ${
+                lang === l
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-emerald-950/70 hover:text-emerald-950'
+              }`}
+            >
+              {t(`lang.${l}`)}
+            </button>
+          ))}
+        </div>
         <button
           onClick={toggleTheme}
-          className="flex cursor-pointer items-center gap-2 rounded-full border border-border bg-panel-2 px-4 py-2 text-xs font-medium transition-all hover:border-accent focus:outline-2 focus:outline-accent"
+          className="flex cursor-pointer items-center gap-2 rounded-full border border-emerald-900/15 bg-white/70 px-4 py-2 text-xs font-medium text-emerald-950 transition-all hover:border-emerald-700/40 focus:outline-2 focus:outline-accent"
         >
           {theme === 'dark' ? (
             <>
@@ -64,7 +85,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
                 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
               </svg>
-              Clair
+              {t('theme.light')}
             </>
           ) : (
             <>
@@ -80,7 +101,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
               >
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>
-              Sombre
+              {t('theme.dark')}
             </>
           )}
         </button>

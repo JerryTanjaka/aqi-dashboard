@@ -1,9 +1,11 @@
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cityColor, cssVar, monthNames, monthOrder } from '../../lib/theme'
+import { useLang } from '../../context/LanguageContext'
+import { cityColor, cssVar, monthOrder } from '../../lib/theme'
 
 export default function MonthlyLine({ rows }) {
   useTheme()
+  const { t, tMonth } = useLang()
   const axis = cssVar('--muted')
   const grid = cssVar('--grid')
 
@@ -25,7 +27,7 @@ export default function MonthlyLine({ rows }) {
   const data = {
     labels: keys.map((k) => {
       const [year, month] = k.split('|')
-      return `${monthNames[month] ?? month} ${String(year).slice(2)}`
+      return `${tMonth(month)} ${String(year).slice(2)}`
     }),
     datasets: cityNames.map((name, i) => ({
       label: name,
@@ -43,7 +45,7 @@ export default function MonthlyLine({ rows }) {
     maintainAspectRatio: false,
     scales: {
       x: { ticks: { color: axis, maxRotation: 45 }, grid: { color: grid } },
-      y: { title: { display: true, text: 'AQI moyen', color: axis }, ticks: { color: axis }, grid: { color: grid } },
+      y: { title: { display: true, text: t('chart.aqiAvg'), color: axis }, ticks: { color: axis }, grid: { color: grid } },
     },
     plugins: { legend: { labels: { color: axis, boxWidth: 10, font: { size: 10 } } } },
   }

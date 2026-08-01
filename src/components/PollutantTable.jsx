@@ -1,3 +1,5 @@
+import { useLang } from '../context/LanguageContext'
+
 const rows = [
   { key: 'pm2_5', label: 'PM2.5', unit: 'µg/m³' },
   { key: 'pm10', label: 'PM10', unit: 'µg/m³' },
@@ -9,6 +11,7 @@ const rows = [
 ]
 
 export default function PollutantTable({ averages }) {
+  const { t } = useLang()
   const sorted = rows
     .map((r) => ({ ...r, value: averages[r.key] ?? 0 }))
     .sort((a, b) => b.value - a.value)
@@ -17,9 +20,9 @@ export default function PollutantTable({ averages }) {
     <table className="w-full border-collapse text-xs">
       <thead>
         <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-muted">
-          <th className="px-2.5 py-2 font-semibold">Polluant</th>
-          <th className="px-2.5 py-2 text-right font-semibold">Moyenne</th>
-          <th className="px-2.5 py-2 text-right font-semibold">Unité</th>
+          <th className="px-2.5 py-2 font-semibold">{t('table.pollutant')}</th>
+          <th className="px-2.5 py-2 text-right font-semibold">{t('table.avg')}</th>
+          <th className="px-2.5 py-2 text-right font-semibold">{t('table.unit')}</th>
         </tr>
       </thead>
       <tbody>

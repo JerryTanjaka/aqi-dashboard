@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ThemeProvider } from './context/ThemeContext'
+import { LanguageProvider, useLang } from './context/LanguageContext'
 import FilterProvider, { useFilters } from './context/FilterContext'
 import { loadAllData } from './lib/api'
 import TopBar from './components/TopBar'
@@ -30,6 +31,7 @@ const debutantPages = {
 
 function Dashboard() {
   const { mode, filterParams, filtersKey, setRange, setGlobalRange } = useFilters()
+  const { t } = useLang()
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   const [page, setPage] = useState('overview')
@@ -68,12 +70,12 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen text-ink">
-      <TopBar page={page} onPageChange={setPage} mode={mode} status={error ? 'Erreur de chargement' : data ? 'Données à jour' : 'Chargement...'} />
+      <TopBar page={page} onPageChange={setPage} mode={mode} status={error ? t('status.error') : data ? t('status.ready') : t('status.loading')} />
       <FilterBar />
       {error && (
         <div className="mx-auto mt-6 max-w-7xl px-6">
           <p className="rounded-md bg-bad/10 px-4 py-2.5 text-xs text-bad">
-            Erreur: {error}. Vérifie que DATABASE_URL est bien configurée dans les variables d'environnement Vercel.
+            {t('error.database', { msg: error })}
           </p>
         </div>
       )}
@@ -85,9 +87,11 @@ function Dashboard() {
 export default function App() {
   return (
     <ThemeProvider>
-      <FilterProvider>
-        <Dashboard />
-      </FilterProvider>
+      <LanguageProvider>
+        <FilterProvider>
+          <Dashboard />
+        </FilterProvider>
+      </LanguageProvider>
     </ThemeProvider>
   )
 }

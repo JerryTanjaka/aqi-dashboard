@@ -1,9 +1,11 @@
 import { Bar } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
+import { useLang } from '../../context/LanguageContext'
 import { cssVar, cityColor } from '../../lib/theme'
 
 export default function MissingChart({ missing }) {
   useTheme()
+  const { t } = useLang()
   const axis = cssVar('--muted')
   const grid = cssVar('--grid')
   const sorted = [...missing].sort((a, b) => b.missing_pct - a.missing_pct)
@@ -14,8 +16,8 @@ export default function MissingChart({ missing }) {
       <div className="flex h-72 items-center justify-center rounded-xl border border-border bg-panel-2/50">
         <div className="text-center">
           <p className="text-4xl text-good">&#10003;</p>
-          <p className="mt-2 text-sm font-medium">Aucune donnée manquante</p>
-          <p className="text-xs text-muted">Toutes les villes ont des mesures complètes</p>
+          <p className="mt-2 text-sm font-medium">{t('missing.none')}</p>
+          <p className="text-xs text-muted">{t('missing.noneSub')}</p>
         </div>
       </div>
     )

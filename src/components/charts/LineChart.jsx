@@ -1,9 +1,11 @@
 import { Line } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
+import { useLang } from '../../context/LanguageContext'
 import { cityColor, cssVar, formatDate } from '../../lib/theme'
 
 export default function LineChart({ timeseries }) {
   useTheme()
+  const { t } = useLang()
   const axis = cssVar('--muted')
   const grid = cssVar('--grid')
 
@@ -38,7 +40,7 @@ export default function LineChart({ timeseries }) {
         grid: { color: grid },
       },
       y: {
-        title: { display: true, text: 'AQI moyen', color: axis },
+        title: { display: true, text: t('chart.aqiAvg'), color: axis },
         ticks: { color: axis },
         grid: { color: grid },
         suggestedMin: Math.floor((lo - 0.02) * 10) / 10,

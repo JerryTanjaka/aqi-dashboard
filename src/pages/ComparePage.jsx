@@ -3,55 +3,51 @@ import ChartWhy from '../components/ChartWhy'
 import BarCities from '../components/charts/BarCities'
 import StackedPollutants from '../components/charts/StackedPollutants'
 import DonutPollutants from '../components/charts/DonutPollutants'
+import { useLang } from '../context/LanguageContext'
 
 const pollutants = [
-  { name: 'PM2.5', desc: 'Particules fines de moins de 2,5 µm. Pénètrent profondément dans les poumons et le sang.' },
-  { name: 'PM10', desc: 'Particules de moins de 10 µm : poussières, sable, combustion, érosion.' },
-  { name: 'NO2', desc: "Dioxyde d'azote, issu de la combustion (trafic, industries). Irrite les voies respiratoires." },
-  { name: 'O3', desc: "Ozone au niveau du sol, formé au soleil à partir d'autres polluants. Irrite les yeux et les poumons." },
-  { name: 'CO', desc: "Monoxyde de carbone, gaz de combustion incomplète. Réduit l'apport d'oxygène dans le sang." },
-  { name: 'SO2', desc: 'Dioxyde de soufre, émis par les combustibles soufrés (centrales, navires). Contribue aux pluies acides.' },
-  { name: 'NH3', desc: 'Ammoniac, principalement agricole (engrais, élevage). Précureur de particules secondaires.' },
+  { name: 'PM2.5', key: 'pm25' },
+  { name: 'PM10', key: 'pm10' },
+  { name: 'NO2', key: 'no2' },
+  { name: 'O3', key: 'o3' },
+  { name: 'CO', key: 'co' },
+  { name: 'SO2', key: 'so2' },
+  { name: 'NH3', key: 'nh3' },
 ]
 
 export default function ComparePage({ data }) {
+  const { t } = useLang()
   return (
     <main className="fade-in mx-auto max-w-7xl p-6 md:p-8">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Panel title="AQI moyen par ville" subtitle="Trié décroissant">
+        <Panel title={t('compare.barTitle')} subtitle={t('compare.barSubtitle')}>
           <BarCities cities={data.cities} />
-          <ChartWhy>
-            Histogramme : la hauteur des barres rend la comparaison entre les 5 villes immédiate, précise et
-            ordonnée.
-          </ChartWhy>
+          <ChartWhy>{t('compare.barWhy')}</ChartWhy>
         </Panel>
-        <Panel title="Polluants par ville" subtitle="PM2.5 / PM10 / NO2 / O3 (µg/m³)">
+        <Panel title={t('compare.stackTitle')} subtitle={t('compare.stackSubtitle')}>
           <StackedPollutants rows={data.pollutants} />
-          <ChartWhy>
-            Les barres empilées montrent à la fois le total de pollution par ville et la part de chaque polluant.
-          </ChartWhy>
+          <ChartWhy>{t('compare.stackWhy')}</ChartWhy>
         </Panel>
       </div>
       <div className="mt-6">
-        <Panel title="Répartition moyenne des polluants" subtitle="Part de chaque polluant (µg/m³)">
+        <Panel title={t('compare.donutTitle')} subtitle={t('compare.donutSubtitle')}>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <DonutPollutants rows={data.pollutants} />
             <div className="flex flex-col justify-center gap-2">
-              <ChartWhy>
-                Diagramme circulaire : avec seulement 4 polluants, les parts d'un tout se comparent d'un coup
-                d'œil, ce qu'un tableau ne permet pas.
-              </ChartWhy>
+              <ChartWhy>{t('compare.donutWhy')}</ChartWhy>
             </div>
           </div>
         </Panel>
       </div>
       <div className="mt-6">
-        <Panel title="À quoi correspondent les polluants ?" subtitle="Unité : µg/m³ (microgrammes par mètre cube d'air)">
+        <Panel title={t('compare.glossTitle')} subtitle={t('compare.glossSubtitle')}>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {pollutants.map((p) => (
               <div key={p.name} className="rounded-xl border border-[var(--color-border)] p-3">
                 <div className="text-sm font-semibold text-[var(--color-accent)]">{p.name}</div>
-                <p className="mt-1 text-xs leading-relaxed text-[var(--color-muted)]">{p.desc}</p>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--color-muted)]">
+                  {t(`pollutants.${p.key}.desc`)}
+                </p>
               </div>
             ))}
           </div>

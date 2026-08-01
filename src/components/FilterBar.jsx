@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { PRESETS, useFilters } from '../context/FilterContext'
 import { fetchJSON } from '../lib/api'
+import { useLang } from '../context/LanguageContext'
 
 export default function FilterBar() {
   const { mode, setMode, city, setCity, presetId, applyPreset, from, to, setCustom } = useFilters()
+  const { t } = useLang()
   const [cities, setCities] = useState([])
 
   useEffect(() => {
@@ -32,8 +34,8 @@ export default function FilterBar() {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3">
         <div className="flex rounded-full border border-border bg-panel-2 p-1">
           {[
-            { id: 'debutant', label: 'Débutant' },
-            { id: 'expert', label: 'Expert' },
+            { id: 'debutant', label: t('mode.debutant') },
+            { id: 'expert', label: t('mode.expert') },
           ].map((m) => (
             <button
               key={m.id}
@@ -48,7 +50,7 @@ export default function FilterBar() {
         </div>
 
         <select value={city} onChange={(e) => setCity(e.target.value)} className={inputClass}>
-          <option value="all">Toutes les villes</option>
+          <option value="all">{t('city.all')}</option>
           {cities.map((c) => (
             <option key={c.city_name} value={c.city_name}>
               {c.city_name}
@@ -59,7 +61,7 @@ export default function FilterBar() {
         <div className="flex flex-wrap gap-1">
           {PRESETS.map((p) => (
             <button key={p.id} onClick={() => applyPreset(p.id)} className={presetClass(presetId === p.id)}>
-              {p.label}
+              {t(`preset.${p.id}`)}
             </button>
           ))}
         </div>
@@ -70,7 +72,7 @@ export default function FilterBar() {
 
         {(from || to) && (
           <button onClick={() => applyPreset('all')} className="cursor-pointer text-xs text-muted hover:text-bad">
-            Réinitialiser
+            {t('action.reset')}
           </button>
         )}
       </div>

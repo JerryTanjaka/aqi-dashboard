@@ -1,4 +1,5 @@
-import { cssVar, dayNames } from '../../lib/theme'
+import { cssVar } from '../../lib/theme'
+import { useLang } from '../../context/LanguageContext'
 
 const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const hours = Array.from({ length: 24 }, (_, i) => i)
@@ -6,6 +7,7 @@ const hours = Array.from({ length: 24 }, (_, i) => i)
 const norm = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
 
 export default function Heatmap({ rows }) {
+  const { t, tDay } = useLang()
   const axis = cssVar('--muted')
   const maxAqi = Math.max(...rows.map((r) => r.avg_aqi), 1)
 
@@ -26,7 +28,7 @@ export default function Heatmap({ rows }) {
         {dayOrder.map((day) => (
           <div key={day} className="contents">
             <div className="flex items-center pr-2 text-xs font-medium" style={{ color: axis }}>
-              {dayNames[day] ?? day}
+              {tDay(day)}
             </div>
             {hours.map((h) => {
               const v = lookup[`${day}:${h}`]
@@ -35,7 +37,7 @@ export default function Heatmap({ rows }) {
               return (
                 <div
                   key={`${day}-${h}`}
-                  title={v ? `${dayNames[day] ?? day} ${h}h — AQI ${v.toFixed(2)}` : 'Pas de donnée'}
+                  title={v ? `${tDay(day)} ${h}h — AQI ${v.toFixed(2)}` : t('heatmap.noData')}
                   className="flex h-8 items-center justify-center rounded text-[9px]"
                   style={{
                     background: v ? `rgba(45, 212, 191, ${alpha})` : undefined,

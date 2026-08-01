@@ -7,9 +7,11 @@ import LineChart from '../components/charts/LineChart'
 import MonthlyLine from '../components/charts/MonthlyLine'
 import { loadPatterns } from '../lib/api'
 import { useFilters } from '../context/FilterContext'
+import { useLang } from '../context/LanguageContext'
 
 export default function OverviewPage({ data }) {
   const { filterParams, filtersKey } = useFilters()
+  const { t } = useLang()
   const [monthly, setMonthly] = useState(null)
 
   useEffect(() => {
@@ -29,31 +31,22 @@ export default function OverviewPage({ data }) {
       <KpiCards kpis={data.kpis} />
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel
-          title="Carte de la qualité de l'air à Madagascar"
-          subtitle="Couleur de chaque ville = AQI moyen (vert bon → rouge mauvais)"
+          title={t('overview.mapTitle')}
+          subtitle={t('overview.mapSubtitle')}
         >
           <MadagascarMap cities={data.cities} />
-          <ChartWhy>
-            La carte ancre immédiatement les 5 villes dans leur contexte géographique : la couleur de chaque point
-            donne la qualité de l'air d'un coup d'œil, sans lire un tableau.
-          </ChartWhy>
+          <ChartWhy>{t('overview.mapWhy')}</ChartWhy>
         </Panel>
-        <Panel title="Évolution de l'AQI" subtitle="Moyenne journalière par ville">
+        <Panel title={t('overview.lineTitle')} subtitle={t('overview.lineSubtitle')}>
           <LineChart timeseries={data.timeseries} />
-          <ChartWhy>
-            La courbe est le graphique adapté à l'évolution temporelle : l'axe des dates se lit de gauche à droite
-            et révèle la tendance de chaque ville.
-          </ChartWhy>
+          <ChartWhy>{t('overview.lineWhy')}</ChartWhy>
         </Panel>
       </div>
       {monthly && (
         <div className="mt-6">
-          <Panel title="AQI moyen par mois" subtitle="Moyenne mensuelle par ville">
+          <Panel title={t('overview.monthlyTitle')} subtitle={t('overview.monthlySubtitle')}>
             <MonthlyLine rows={monthly} />
-            <ChartWhy>
-              Lisser les données par mois atténue le bruit quotidien et met en évidence les variations
-              saisonnières.
-            </ChartWhy>
+            <ChartWhy>{t('overview.monthlyWhy')}</ChartWhy>
           </Panel>
         </div>
       )}

@@ -1,4 +1,5 @@
 import { useFilters } from '../../context/FilterContext'
+import { useLang } from '../../context/LanguageContext'
 import { aqiColor, cssVar } from '../../lib/theme'
 import geojson from '../../data/madagascar.json'
 
@@ -11,6 +12,7 @@ function collectRings(coords) {
 
 export default function MadagascarMap({ cities, height = 500 }) {
   const { globalRange } = useFilters()
+  const { t } = useLang()
   const grid = cssVar('--grid')
   const stroke = cssVar('--muted')
   const panel = cssVar('--panel')
@@ -52,8 +54,8 @@ export default function MadagascarMap({ cities, height = 500 }) {
     .join(' ')
 
   const { min, max } = globalRange
-  const t = (v) => (max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0)
-  const r = (v) => 14 + 22 * t(v)
+  const tNorm = (v) => (max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0)
+  const r = (v) => 14 + 22 * tNorm(v)
 
   return (
     <div>
@@ -66,7 +68,7 @@ export default function MadagascarMap({ cities, height = 500 }) {
               cx={x(c.lon)}
               cy={y(c.lat)}
               r={r(c.avg_aqi)}
-              fill={aqiColor(t(c.avg_aqi))}
+              fill={aqiColor(tNorm(c.avg_aqi))}
               stroke={panel}
               strokeWidth={2.5}
             />
@@ -90,15 +92,15 @@ export default function MadagascarMap({ cities, height = 500 }) {
       <div className="mt-3 flex items-center justify-center gap-5 text-base font-medium text-muted">
         <span className="flex items-center gap-2">
           <span className="h-3.5 w-3.5 rounded-full" style={{ background: aqiColor(0) }} />
-          Bon
+          {t('band.bon')}
         </span>
         <span className="flex items-center gap-2">
           <span className="h-3.5 w-3.5 rounded-full" style={{ background: aqiColor(0.5) }} />
-          Moyen
+          {t('band.moyen')}
         </span>
         <span className="flex items-center gap-2">
           <span className="h-3.5 w-3.5 rounded-full" style={{ background: aqiColor(1) }} />
-          Mauvais
+          {t('band.mauvais')}
         </span>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { loadCorrelations } from '../lib/api'
 import { useFilters } from '../context/FilterContext'
+import { useLang } from '../context/LanguageContext'
 import Panel from '../components/Panel'
 import ChartWhy from '../components/ChartWhy'
 import ScatterChart from '../components/charts/ScatterChart'
@@ -10,6 +11,7 @@ import CorrelationsMatrix from '../components/charts/CorrelationsMatrix'
 
 export default function CorrelationsPage() {
   const { filterParams, filtersKey } = useFilters()
+  const { t } = useLang()
   const [correlations, setCorrelations] = useState(null)
   const [error, setError] = useState('')
 
@@ -31,7 +33,9 @@ export default function CorrelationsPage() {
   if (error) {
     return (
       <main className="mx-auto max-w-7xl p-6 md:p-8">
-        <p className="rounded-md bg-bad/10 px-4 py-2.5 text-xs text-bad">Erreur: {error}</p>
+        <p className="rounded-md bg-bad/10 px-4 py-2.5 text-xs text-bad">
+          {t('error.prefix')}{error}
+        </p>
       </main>
     )
   }
@@ -39,7 +43,7 @@ export default function CorrelationsPage() {
   if (!correlations) {
     return (
       <main className="mx-auto max-w-7xl p-6 md:p-8">
-        <p className="text-sm text-muted">Chargement des corrélations...</p>
+        <p className="text-sm text-muted">{t('loading.correlations')}</p>
       </main>
     )
   }
@@ -48,41 +52,35 @@ export default function CorrelationsPage() {
     <main className="fade-in mx-auto max-w-7xl p-6 md:p-8">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel
-          title="PM2.5 vs AQI"
-          subtitle={`Nuage de points, 2000 échantillons · r = ${correlations.rPm25Aqi != null ? correlations.rPm25Aqi.toFixed(2) : '—'}`}
+          title={t('corr.scatterTitle')}
+          subtitle={t('corr.scatterSubtitle', {
+            r: correlations.rPm25Aqi != null ? correlations.rPm25Aqi.toFixed(2) : '—',
+          })}
           className="min-w-80"
         >
           <ScatterChart samples={correlations.samples} />
-          <ChartWhy>
-            Nuage de points : chaque point est une mesure réelle. Si les points s'alignent, il y a une relation —
-            ici PM2.5 et AQI. Le coefficient r quantifie la force de cette relation (-1 à +1).
-          </ChartWhy>
+          <ChartWhy>{t('corr.scatterWhy')}</ChartWhy>
         </Panel>
         <Panel
-          title="Moyenne globale des polluants"
-          subtitle="Trié décroissant"
+          title={t('corr.avgTitle')}
+          subtitle={t('corr.avgSubtitle')}
           className="min-w-80"
         >
           <PollutantBar averages={correlations.averages} />
-          <ChartWhy>
-            Histogramme : la longueur des barres classe les polluants du plus au moins concentré dans l'air.
-          </ChartWhy>
+          <ChartWhy>{t('corr.avgWhy')}</ChartWhy>
         </Panel>
       </div>
       <Panel
-        title="Matrice de corrélations entre polluants"
-        subtitle="r de Pearson entre 8 variables · rouge = corrélation positive, bleu = négative"
+        title={t('corr.matrixTitle')}
+        subtitle={t('corr.matrixSubtitle')}
         className="mt-6 max-w-none"
       >
         <CorrelationsMatrix matrix={correlations.matrix} />
-        <ChartWhy>
-          La matrice résume toutes les relations deux à deux dans une grille colorée : on identifie d'un coup
-          d'œil quels polluants varient ensemble.
-        </ChartWhy>
+        <ChartWhy>{t('corr.matrixWhy')}</ChartWhy>
       </Panel>
       <Panel
-        title="Récapitulatif polluants"
-        subtitle="Moyenne et unité de chaque polluant"
+        title={t('corr.tableTitle')}
+        subtitle={t('corr.tableSubtitle')}
         className="mt-6 max-w-none"
       >
         <PollutantTable averages={correlations.averages} />
