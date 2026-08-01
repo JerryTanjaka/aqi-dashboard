@@ -9,7 +9,7 @@ function collectRings(coords) {
   return coords.flat()
 }
 
-export default function MadagascarMap({ cities }) {
+export default function MadagascarMap({ cities, className = 'h-72' }) {
   const { globalRange } = useFilters()
   const axis = cssVar('--muted')
   const panel2 = cssVar('--panel-2')
@@ -56,30 +56,26 @@ export default function MadagascarMap({ cities }) {
 
   return (
     <div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full">
-        <path d={path} fill={panel2} stroke={border} strokeWidth={1.5} strokeLinejoin="round" />
-        {cities.map((c) => (
-          <g key={c.city_name}>
-            <circle
-              cx={x(c.lon)}
-              cy={y(c.lat)}
-              r={r(c.avg_aqi)}
-              fill={aqiColor(t(c.avg_aqi))}
-              stroke={panel}
-              strokeWidth={2}
-            />
-            <text
-              x={x(c.lon) + 9}
-              y={y(c.lat) + 3}
-              fontSize="11"
-              fontWeight="600"
-              fill={axis}
-            >
-              {c.city_name}
-            </text>
-          </g>
-        ))}
-      </svg>
+      <div className={className}>
+        <svg viewBox={`0 0 ${W} ${H}`} className="h-full w-full">
+          <path d={path} fill={panel2} stroke={border} strokeWidth={1.5} strokeLinejoin="round" />
+          {cities.map((c) => (
+            <g key={c.city_name}>
+              <circle
+                cx={x(c.lon)}
+                cy={y(c.lat)}
+                r={r(c.avg_aqi)}
+                fill={aqiColor(t(c.avg_aqi))}
+                stroke={panel}
+                strokeWidth={2}
+              />
+              <text x={x(c.lon) + 9} y={y(c.lat) + 3} fontSize="11" fontWeight="600" fill={axis}>
+                {c.city_name}
+              </text>
+            </g>
+          ))}
+        </svg>
+      </div>
       <div className="mt-3 flex items-center justify-center gap-4 text-[11px] text-muted">
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: aqiColor(0) }} />
