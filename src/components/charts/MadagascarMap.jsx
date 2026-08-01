@@ -9,9 +9,8 @@ function collectRings(coords) {
   return coords.flat()
 }
 
-export default function MadagascarMap({ cities, className = 'h-96' }) {
+export default function MadagascarMap({ cities, height = 500 }) {
   const { globalRange } = useFilters()
-  const axis = cssVar('--muted')
   const grid = cssVar('--grid')
   const stroke = cssVar('--muted')
   const panel = cssVar('--panel')
@@ -41,6 +40,8 @@ export default function MadagascarMap({ cities, className = 'h-96' }) {
   const H = Math.round(((W - 2 * PAD) * latSpan) / lonSpan / Math.cos(midLat) + 2 * PAD)
   const x = (lon) => PAD + ((lon - minLon) / lonSpan) * (W - 2 * PAD)
   const y = (lat) => PAD + ((maxLat - lat) / latSpan) * (H - 2 * PAD)
+  const pctX = (lon) => (x(lon) / W) * 100
+  const pctY = (lat) => (y(lat) / H) * 100
 
   const path = rings
     .map((ring) =>
@@ -52,31 +53,46 @@ export default function MadagascarMap({ cities, className = 'h-96' }) {
 
   const { min, max } = globalRange
   const t = (v) => (max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0)
-  const r = (v) => 8 + 5 * t(v)
+  const r = (v) => 14 + 22 * t(v)
 
   return (
     <div>
-      <div className={className}>
+      <div className="relative mx-auto" style={{ height, aspectRatio: `${W}/${H}` }}>
         <svg viewBox={`0 0 ${W} ${H}`} className="h-full w-full">
           <path d={path} fill={grid} stroke={stroke} strokeWidth={1.5} strokeLinejoin="round" />
           {cities.map((c) => (
-            <g key={c.city_name}>
-              <circle
-                cx={x(c.lon)}
-                cy={y(c.lat)}
-                r={r(c.avg_aqi)}
-                fill={aqiColor(t(c.avg_aqi))}
-                stroke={panel}
-                strokeWidth={2.5}
-              />
-              <text x={x(c.lon) + 12} y={y(c.lat) + 4} fontSize="15" fontWeight="700" fill={axis}>
-                {c.city_name}
-              </text>
-            </g>
+            <circle
+              key={c.city_name}
+              cx={x(c.lon)}
+              cy={y(c.lat)}
+              r={r(c.avg_aqi)}
+              fill={aqiColor(t(c.avg_aqi))}
+              stroke={panel}
+              strokeWidth={2.5}
+            />
           ))}
         </svg>
+        {cities.map((c) => {
+          const right = pctX(c.lon) > 72
+          return (
+            <span
+              key={c.city_name}
+              className="absolute whitespace-nowrap text-xl font-bold text-muted"
+              style={{
+                left: `${pctX(c.lon)}%`,
+                top: `${pctY(c.lat)}%`,
+                transform: right
+                  ? 'translate(calc(-100% - 16px), -50%)'
+                  : 'translate(16px, -50%)',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.18)',
+              }}
+            >
+              {c.city_name}
+            </span>
+          )
+        })}
       </div>
-      <div className="mt-3 flex items-center justify-center gap-4 text-[11px] text-muted">
+      <div className="mt-3 flex items-center justify-center gap-4 text-xs text-muted">
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: aqiColor(0) }} />
           Bon
