@@ -13,8 +13,8 @@ export default function TopBar({ page, onPageChange, mode, status }) {
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/30 bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-600 px-6 py-3 shadow-md shadow-teal-950/10 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center gap-x-6">
+        <div className="flex shrink-0 items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-md">
             <svg
               width="22"
@@ -56,7 +56,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
           </div>
         </div>
 
-        <nav className="flex flex-wrap gap-1.5">
+        <nav className="flex min-w-0 flex-1 flex-wrap gap-1.5">
           {tabs.map((id) => (
             <button
               key={id}
@@ -72,7 +72,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-3">
           <span className="hidden text-xs font-medium text-white/90 sm:inline" style={halo}>
             {status}
           </span>
