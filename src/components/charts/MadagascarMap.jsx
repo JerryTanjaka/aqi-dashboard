@@ -72,37 +72,32 @@ export default function MadagascarMap({ cities, height = 500 }) {
             />
           ))}
         </svg>
-        {cities.map((c) => {
-          const right = pctX(c.lon) > 72
-          return (
-            <span
-              key={c.city_name}
-              className="absolute whitespace-nowrap text-xl font-bold text-muted"
-              style={{
-                left: `${pctX(c.lon)}%`,
-                top: `${pctY(c.lat)}%`,
-                transform: right
-                  ? 'translate(calc(-100% - 16px), -50%)'
-                  : 'translate(16px, -50%)',
-                textShadow: '0 1px 2px rgba(0, 0, 0, 0.18)',
-              }}
-            >
-              {c.city_name}
-            </span>
-          )
-        })}
+        {cities.map((c) => (
+          <span
+            key={c.city_name}
+            className="absolute whitespace-nowrap text-xl font-bold text-muted"
+            style={{
+              left: `${pctX(c.lon)}%`,
+              top: `${pctY(c.lat)}%`,
+              transform: 'translate(16px, -50%)',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.18)',
+            }}
+          >
+            {c.city_name}
+          </span>
+        ))}
       </div>
-      <div className="mt-3 flex items-center justify-center gap-4 text-xs text-muted">
-        <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: aqiColor(0) }} />
+      <div className="mt-3 flex items-center justify-center gap-5 text-base font-medium text-muted">
+        <span className="flex items-center gap-2">
+          <span className="h-3.5 w-3.5 rounded-full" style={{ background: aqiColor(0) }} />
           Bon
         </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: aqiColor(0.5) }} />
+        <span className="flex items-center gap-2">
+          <span className="h-3.5 w-3.5 rounded-full" style={{ background: aqiColor(0.5) }} />
           Moyen
         </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: aqiColor(1) }} />
+        <span className="flex items-center gap-2">
+          <span className="h-3.5 w-3.5 rounded-full" style={{ background: aqiColor(1) }} />
           Mauvais
         </span>
       </div>
