@@ -4,7 +4,8 @@ import { useLang } from '../context/LanguageContext'
 const expertTabs = ['overview', 'compare', 'quality', 'temporal', 'correlations']
 const debutantTabs = ['accueil', 'ma-ville', 'evolution']
 
-const pill = 'rounded-full bg-white/90 px-2.5 py-1 text-sm font-semibold shadow-sm'
+const brandWord = 'text-sm font-bold'
+const brandShadow = { textShadow: '0 0 8px rgba(255, 255, 255, 0.75)' }
 
 export default function TopBar({ page, onPageChange, mode, status }) {
   const { theme, toggleTheme } = useTheme()
@@ -13,19 +14,19 @@ export default function TopBar({ page, onPageChange, mode, status }) {
 
   return (
     <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-emerald-900/10 bg-linear-to-r from-emerald-300 via-teal-400 to-cyan-500 px-6 py-3.5 backdrop-blur">
-      <h1 className="flex flex-wrap items-center gap-1.5 text-sm font-semibold">
+      <h1 className="flex flex-wrap items-center gap-1.5 text-sm font-bold">
         {lang === 'fr' ? (
           <>
-            <span className={`${pill} text-emerald-900`}>{t('brand.part1')}</span>
-            <span className={`${pill} text-sky-600`}>{t('brand.part2')}</span>
+            <span className={`${brandWord} text-emerald-950`} style={brandShadow}>{t('brand.part1')}</span>
+            <span className={`${brandWord} text-blue-700`} style={brandShadow}>{t('brand.part2')}</span>
           </>
         ) : (
           <>
-            <span className={`${pill} text-sky-600`}>{t('brand.part1')}</span>
-            <span className={`${pill} text-emerald-900`}>{t('brand.part2')}</span>
+            <span className={`${brandWord} text-blue-700`} style={brandShadow}>{t('brand.part1')}</span>
+            <span className={`${brandWord} text-emerald-950`} style={brandShadow}>{t('brand.part2')}</span>
           </>
         )}
-        <span className={`${pill} text-emerald-900`}>{t('brand.madagascar')}</span>
+        <span className={`${brandWord} text-emerald-950`} style={brandShadow}>{t('brand.madagascar')}</span>
       </h1>
       <nav className="flex flex-wrap gap-1">
         {tabs.map((id) => (
@@ -35,7 +36,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
             className={`cursor-pointer rounded-lg px-3.5 py-2 text-[13px] font-medium transition-all focus:outline-2 focus:outline-accent ${
               page === id
                 ? 'border border-emerald-800/25 bg-white/70 text-emerald-800'
-                : 'border border-transparent text-emerald-950/80 hover:bg-white/40 hover:text-emerald-950'
+                : 'border border-transparent text-white/95 hover:bg-white/25 hover:text-white'
             }`}
           >
             {t(`tab.${id}`)}
