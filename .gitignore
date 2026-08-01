@@ -8,4 +8,4 @@ dist/
 .env*
 
 # Instructions vidéo — à ne jamais exposer
-unknown.txt
+unknown.*
