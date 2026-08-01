@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const FilterContext = createContext(null)
 
@@ -46,6 +46,15 @@ export default function FilterProvider({ children }) {
     setFrom(fromV || '')
     setTo(toV || '')
   }, [])
+
+  const defaultApplied = useRef(false)
+
+  useEffect(() => {
+    if (!defaultApplied.current && range.max && presetId === 'all' && !from && !to) {
+      defaultApplied.current = true
+      applyPreset('30d')
+    }
+  }, [range.max, presetId, from, to, applyPreset])
 
   const value = useMemo(
     () => ({
