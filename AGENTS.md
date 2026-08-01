@@ -78,3 +78,5 @@ Vercel (api/*.js) qui interrogent une base Postgres Neon via le package `pg`.
 - Production : https://aqi-std24015.vercel.app
 - Compte : jerrytanjaka
 - Repo GitHub : `JerryTanjaka/aqi-dashboard`
+- CI/CD : l'intégration Git Vercel est connectée — un push sur `master` déclenche
+  le Production Deployment automatiquement (plus besoin de `vercel --prod`).
