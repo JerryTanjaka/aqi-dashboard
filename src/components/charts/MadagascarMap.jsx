@@ -9,11 +9,11 @@ function collectRings(coords) {
   return coords.flat()
 }
 
-export default function MadagascarMap({ cities, className = 'h-72' }) {
+export default function MadagascarMap({ cities, className = 'h-96' }) {
   const { globalRange } = useFilters()
   const axis = cssVar('--muted')
-  const panel2 = cssVar('--panel-2')
-  const border = cssVar('--border')
+  const grid = cssVar('--grid')
+  const stroke = cssVar('--muted')
   const panel = cssVar('--panel')
 
   const rings = []
@@ -52,13 +52,13 @@ export default function MadagascarMap({ cities, className = 'h-72' }) {
 
   const { min, max } = globalRange
   const t = (v) => (max > min ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0)
-  const r = (v) => 5 + 4 * t(v)
+  const r = (v) => 8 + 5 * t(v)
 
   return (
     <div>
       <div className={className}>
         <svg viewBox={`0 0 ${W} ${H}`} className="h-full w-full">
-          <path d={path} fill={panel2} stroke={border} strokeWidth={1.5} strokeLinejoin="round" />
+          <path d={path} fill={grid} stroke={stroke} strokeWidth={1.5} strokeLinejoin="round" />
           {cities.map((c) => (
             <g key={c.city_name}>
               <circle
@@ -67,9 +67,9 @@ export default function MadagascarMap({ cities, className = 'h-72' }) {
                 r={r(c.avg_aqi)}
                 fill={aqiColor(t(c.avg_aqi))}
                 stroke={panel}
-                strokeWidth={2}
+                strokeWidth={2.5}
               />
-              <text x={x(c.lon) + 9} y={y(c.lat) + 3} fontSize="11" fontWeight="600" fill={axis}>
+              <text x={x(c.lon) + 12} y={y(c.lat) + 4} fontSize="15" fontWeight="700" fill={axis}>
                 {c.city_name}
               </text>
             </g>
