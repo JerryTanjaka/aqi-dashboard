@@ -19,7 +19,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
   const tabs = mode === 'debutant' ? debutantTabs : expertTabs
 
   return (
-    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-border bg-linear-to-r from-emerald-400 via-emerald-500 to-emerald-600 px-6 py-3.5 backdrop-blur dark:from-slate-950 dark:via-emerald-950 dark:to-slate-900">
+    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-emerald-900/10 bg-linear-to-r from-emerald-200 via-emerald-300 to-emerald-400 px-6 py-3.5 backdrop-blur dark:border-white/10 dark:from-emerald-950 dark:via-emerald-900 dark:to-slate-950">
       <h1 className="text-sm font-semibold">Qualité de l'Air — Madagascar</h1>
       <nav className="flex flex-wrap gap-1">
         {tabs.map((tab) => (
@@ -28,8 +28,8 @@ export default function TopBar({ page, onPageChange, mode, status }) {
             onClick={() => onPageChange(tab.id)}
             className={`cursor-pointer rounded-lg px-3.5 py-2 text-[13px] font-medium transition-all focus:outline-2 focus:outline-accent ${
               page === tab.id
-                ? 'border border-accent/30 bg-accent/10 text-accent'
-                : 'border border-transparent text-muted hover:bg-panel-2 hover:text-ink'
+                ? 'border border-emerald-800/25 bg-white/70 text-emerald-800 dark:border-white/30 dark:bg-white/15 dark:text-white'
+                : 'border border-transparent text-emerald-950/80 hover:bg-white/40 hover:text-emerald-950 dark:text-emerald-100/80 dark:hover:bg-white/10 dark:hover:text-white'
             }`}
           >
             {tab.label}
@@ -37,7 +37,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
         ))}
       </nav>
       <div className="ml-auto flex items-center gap-4">
-        <span className="text-xs text-muted">{status}</span>
+        <span className="text-xs text-emerald-950/70 dark:text-emerald-100/70">{status}</span>
         <button
           onClick={toggleTheme}
           className="flex cursor-pointer items-center gap-2 rounded-full border border-border bg-panel-2 px-4 py-2 text-xs font-medium transition-all hover:border-accent focus:outline-2 focus:outline-accent"
