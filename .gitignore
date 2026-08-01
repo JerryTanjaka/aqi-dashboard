@@ -6,3 +6,6 @@ dist/
 
 .vercel
 .env*
+
+# Instructions vidéo — à ne jamais exposer
+unknown.txt
