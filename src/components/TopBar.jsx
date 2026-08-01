@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { useLang } from '../context/LanguageContext'
 
@@ -9,11 +10,17 @@ const halo = { textShadow: '0 1px 3px rgba(0, 0, 0, 0.18)' }
 export default function TopBar({ page, onPageChange, mode, status }) {
   const { theme, toggleTheme } = useTheme()
   const { t, lang, setLang } = useLang()
+  const [menuOpen, setMenuOpen] = useState(false)
   const tabs = mode === 'debutant' ? debutantTabs : expertTabs
+
+  const selectTab = (id) => {
+    onPageChange(id)
+    setMenuOpen(false)
+  }
 
   return (
     <header className="sticky top-0 z-20 border-b border-white/30 bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-600 px-6 py-3 shadow-md shadow-teal-950/10 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center gap-x-6">
+      <div className="mx-auto flex max-w-7xl items-center gap-x-3">
         <div className="flex shrink-0 items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-md">
             <svg
@@ -37,7 +44,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
             </svg>
           </div>
           <div>
-            <h1 className="text-xl font-extrabold leading-none tracking-tight">
+            <h1 className="whitespace-nowrap text-xl font-extrabold leading-none tracking-tight">
               {lang === 'fr' ? (
                 <>
                   <span className="text-white" style={halo}>{t('brand.part1')}</span>
@@ -56,12 +63,12 @@ export default function TopBar({ page, onPageChange, mode, status }) {
           </div>
         </div>
 
-        <nav className="flex min-w-0 flex-1 flex-wrap gap-1.5">
+        <nav className="hidden min-w-0 flex-1 flex-wrap gap-1 xl:flex">
           {tabs.map((id) => (
             <button
               key={id}
               onClick={() => onPageChange(id)}
-              className={`cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition-all focus:outline-2 focus:outline-white ${
+              className={`cursor-pointer whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-all focus:outline-2 focus:outline-white ${
                 page === id
                   ? 'bg-white text-emerald-700 shadow-md'
                   : 'border border-white/35 bg-white/15 text-white hover:bg-white/25'
@@ -73,7 +80,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-3">
-          <span className="hidden text-xs font-medium text-white/90 sm:inline" style={halo}>
+          <span className="hidden text-xs font-medium text-white/90 lg:inline" style={halo}>
             {status}
           </span>
           <div className="flex rounded-full border border-white/35 bg-white/15 p-0.5">
@@ -115,7 +122,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
                   <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
                   <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                 </svg>
-                {t('theme.light')}
+                <span className="hidden sm:inline">{t('theme.light')}</span>
               </>
             ) : (
               <>
@@ -131,12 +138,66 @@ export default function TopBar({ page, onPageChange, mode, status }) {
                 >
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
-                {t('theme.dark')}
+                <span className="hidden sm:inline">{t('theme.dark')}</span>
               </>
+            )}
+          </button>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Menu"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/35 bg-white/15 text-white transition-all hover:bg-white/25 focus:outline-2 focus:outline-white xl:hidden"
+          >
+            {menuOpen ? (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
             )}
           </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <div className="absolute inset-x-0 top-full z-30 border-b border-white/30 bg-teal-600/95 px-4 py-3 backdrop-blur xl:hidden">
+          <nav className="flex flex-col gap-1">
+            {tabs.map((id) => (
+              <button
+                key={id}
+                onClick={() => selectTab(id)}
+                className={`cursor-pointer rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all ${
+                  page === id
+                    ? 'bg-white text-emerald-700 shadow-md'
+                    : 'border border-white/35 bg-white/15 text-white hover:bg-white/25'
+                }`}
+              >
+                {t(`tab.${id}`)}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   )
 }
