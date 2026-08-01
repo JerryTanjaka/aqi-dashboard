@@ -19,7 +19,7 @@ export default function TopBar({ page, onPageChange, mode, status }) {
   const tabs = mode === 'debutant' ? debutantTabs : expertTabs
 
   return (
-    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-border bg-linear-to-r from-white via-emerald-50 to-emerald-200 px-6 py-3.5 backdrop-blur dark:from-slate-950 dark:via-emerald-950 dark:to-slate-900">
+    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b border-border bg-linear-to-r from-emerald-400 via-emerald-500 to-emerald-600 px-6 py-3.5 backdrop-blur dark:from-slate-950 dark:via-emerald-950 dark:to-slate-900">
       <h1 className="text-sm font-semibold">Qualité de l'Air — Madagascar</h1>
       <nav className="flex flex-wrap gap-1">
         {tabs.map((tab) => (
