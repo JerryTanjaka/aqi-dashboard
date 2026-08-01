@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import KpiCards from '../components/KpiCards'
 import Panel from '../components/Panel'
 import ChartWhy from '../components/ChartWhy'
-import CityBubble from '../components/charts/CityBubble'
+import MadagascarMap from '../components/charts/MadagascarMap'
 import LineChart from '../components/charts/LineChart'
 import MonthlyLine from '../components/charts/MonthlyLine'
 import { loadPatterns } from '../lib/api'
@@ -29,13 +29,13 @@ export default function OverviewPage({ data }) {
       <KpiCards kpis={data.kpis} />
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel
-          title="Position des villes (géographique)"
-          subtitle="Longitude/Latitude = emplacement · Taille + couleur = AQI moyen (échelle relative aux 5 villes)"
+          title="Carte de la qualité de l'air à Madagascar"
+          subtitle="Couleur de chaque ville = AQI moyen (vert bon → rouge mauvais)"
         >
-          <CityBubble cities={data.cities} />
+          <MadagascarMap cities={data.cities} />
           <ChartWhy>
-            Le positionnement géographique (longitude/latitude) ancre les villes sur une carte mentale : on voit
-            d'un coup d'œil où se concentre la pollution, la taille et la couleur quantifiant l'AQI.
+            La carte ancre immédiatement les 5 villes dans leur contexte géographique : la couleur de chaque point
+            donne la qualité de l'air d'un coup d'œil, sans lire un tableau.
           </ChartWhy>
         </Panel>
         <Panel title="Évolution de l'AQI" subtitle="Moyenne journalière par ville">

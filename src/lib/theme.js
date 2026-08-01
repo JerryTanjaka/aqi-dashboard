@@ -1,11 +1,11 @@
-export const palette = ['#2dd4bf', '#fbbf24', '#818cf8', '#fb7185', '#34d399']
+export const palette = ['#2563eb', '#ec4899', '#f97316', '#8b5cf6', '#06b6d4']
 
 export const cityColors = {
-  Antananarivo: '#2dd4bf',
-  Toliara: '#fb7185',
-  Toamasina: '#818cf8',
-  Mahajanga: '#fbbf24',
-  Antsiranana: '#34d399',
+  Antananarivo: '#2563eb',
+  Toliara: '#06b6d4',
+  Toamasina: '#ec4899',
+  Mahajanga: '#8b5cf6',
+  Antsiranana: '#f97316',
 }
 
 export function cityColor(name, i) {

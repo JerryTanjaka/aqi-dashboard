@@ -1,6 +1,6 @@
 import { Bar } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cssVar, palette } from '../../lib/theme'
+import { cssVar, cityColor } from '../../lib/theme'
 
 export default function MissingChart({ missing }) {
   useTheme()
@@ -23,7 +23,12 @@ export default function MissingChart({ missing }) {
 
   const data = {
     labels: sorted.map((m) => m.city_name),
-    datasets: [{ data: sorted.map((m) => m.missing_pct), backgroundColor: palette }],
+    datasets: [
+      {
+        data: sorted.map((m) => m.missing_pct),
+        backgroundColor: sorted.map((m, i) => cityColor(m.city_name, i)),
+      },
+    ],
   }
 
   const options = {

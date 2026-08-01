@@ -3,6 +3,7 @@ import Panel from '../components/Panel'
 import ChartWhy from '../components/ChartWhy'
 import AqiGauge from '../components/AqiGauge'
 import HealthBadge from '../components/HealthBadge'
+import MadagascarMap from '../components/charts/MadagascarMap'
 import DonutCityShare from '../components/charts/DonutCityShare'
 import { classify } from '../lib/health'
 
@@ -24,6 +25,16 @@ export default function DebutantHomePage({ data }) {
           42 000 mesures. Plus le chiffre est élevé, plus l'air est pollué.
         </p>
       </section>
+
+      <div className="mt-6">
+        <Panel title="Où est l'air bon ou mauvais ?" subtitle="Carte de Madagascar · couleur de chaque ville = qualité de l'air">
+          <MadagascarMap cities={cities} />
+          <ChartWhy>
+            La carte montre directement où il fait bon respirer : plus le point est vert, mieux c'est ; plus il est
+            rouge, plus il faut être prudent.
+          </ChartWhy>
+        </Panel>
+      </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel title="État de l'air en ce moment" subtitle="Moyenne globale sur la période choisie">

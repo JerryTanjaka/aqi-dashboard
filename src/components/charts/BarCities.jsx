@@ -1,6 +1,6 @@
 import { Bar } from 'react-chartjs-2'
 import { useTheme } from '../../context/ThemeContext'
-import { cssVar, palette } from '../../lib/theme'
+import { cssVar, cityColor } from '../../lib/theme'
 
 export default function BarCities({ cities }) {
   useTheme()
@@ -10,7 +10,12 @@ export default function BarCities({ cities }) {
 
   const data = {
     labels: sorted.map((c) => c.city_name),
-    datasets: [{ data: sorted.map((c) => c.avg_aqi), backgroundColor: palette }],
+    datasets: [
+      {
+        data: sorted.map((c) => c.avg_aqi),
+        backgroundColor: sorted.map((c, i) => cityColor(c.city_name, i)),
+      },
+    ],
   }
 
   const options = {

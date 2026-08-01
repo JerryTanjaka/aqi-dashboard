@@ -29,9 +29,10 @@ Vercel (api/*.js) qui interrogent une base Postgres Neon via le package `pg`.
   `DebutantHomePage`, `DebutantCityPage`, `DebutantTrendPage`
 - `src/components/` — TopBar, FilterBar, KpiCards, QualityCards, RecapTable,
   Panel, Card, LoadingState, PollutantTable, AqiGauge, HealthBadge, ChartWhy
-- `src/components/charts/` — CityBubble, LineChart, BarCities,
+- `src/components/charts/` — MadagascarMap, LineChart, BarCities,
   StackedPollutants, MissingChart, Heatmap, WeekendBar, MonthlyLine,
   ScatterChart, PollutantBar, DonutCityShare, DonutPollutants, CorrelationsMatrix
+- `src/data/madagascar.json` — GeoJSON simplifié de Madagascar (aperçu carte AQI)
 - `src/lib/api.js` — fetch des 7 endpoints (params filtrés) + helpers `qs`
 - `src/lib/theme.js` — palette Chart.js, noms de jours/mois FR, format de date, CSS vars
 - `src/lib/health.js` — 5 paliers santé relatifs (min/max) + recommandations FR
